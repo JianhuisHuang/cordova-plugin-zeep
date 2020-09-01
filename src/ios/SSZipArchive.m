@@ -440,11 +440,19 @@
         fileManager = [[NSFileManager alloc] init];
         NSDirectoryEnumerator *dirEnumerator = [fileManager enumeratorAtPath:directoryPath];
         NSString *fileName;
+        NSMutableArray *sortedFilesTemp = [[NSMutableArray alloc]init];
         while ((fileName = [dirEnumerator nextObject])) {
+            [sortedFilesTemp addObject:fileName];
+        }
+        NSArray *sortedFiles = [sortedFilesTemp copy];
+        sortedFiles = [sortedFiles sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+        NSEnumerator *e = [sortedFiles objectEnumerator];
+        while ((fileName = [e nextObject])) {
             BOOL isDir;
             NSString *fullFilePath = [directoryPath stringByAppendingPathComponent:fileName];
             [fileManager fileExistsAtPath:fullFilePath isDirectory:&isDir];
             if (!isDir) {
+                
                 if (keepParentDirectory)
                 {
                     fileName = [[directoryPath lastPathComponent] stringByAppendingPathComponent:fileName];
